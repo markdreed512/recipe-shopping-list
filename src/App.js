@@ -7,30 +7,44 @@ function App() {
   const [searchValue, setSearchValue] = useState("")
   const [ingredients, setIngredients] = useState([])
   const [inputValue, setInputValue] = useState("")
-  const [recipe, setRecipe] = useState("")
-
+  const [recipeData, setRecipeData] = useState("")
+  const [allRecipes, setAllRecipes] = useState([])
+  const [currentRecipeIndex, setCurrentRecipeIndex] = useState(0)
+  const [recipeName, setRecipeName] = useState("test")
   useEffect(()=>{
       if(searchValue){
-          const url = `https://api.edamam.com/search?q=${searchValue}&app_id=28899030&app_key=83a0e2aedc9afc0e98aaf027034eb4c2`
+          const url = `https://api.edamam.com/search?q=${searchValue}&app_id=28899030&app_key=83a0e2aedc9afc0e98aaf027034eb4c2&from=0&to=50&health=vegan`
           fetch(url)
           .then((response)=>{
-              console.log(url)
               return response.json()
           })
           .then((data)=>{
-              setIngredients(data.hits[0].recipe.ingredients)
-              setRecipe(data.hits[0].recipe)
+            console.log(data.hits)
+              setAllRecipes(data.hits)
           })
       }
   },[searchValue])
+  useEffect(()=>{
+    if(allRecipes[0]){
+      const currentRecipe = allRecipes[currentRecipeIndex].recipe
+      const currentIngredients = allRecipes[currentRecipeIndex].recipe.ingredients
+      const currentName = allRecipes[currentRecipeIndex].recipe.label
+      console.log(currentRecipe)
+      setRecipeData(currentRecipe)
+      setIngredients(currentIngredients)
+      setRecipeName(currentName)
+    }
+  },[allRecipes, currentRecipeIndex])
   const handleSubmit = (e) => {
       e.preventDefault()
       setSearchValue(inputValue)
-    
   }
   
   const handleInputChange = (e) => {
     setInputValue(e.target.value)
+}
+const getDifferentRecipe = () => {
+  setCurrentRecipeIndex(currentRecipeIndex + 1)
 }
   return (
     <>
@@ -41,7 +55,9 @@ function App() {
         />
       <IngredientsList 
         ingredients={ingredients}
-        recipe={recipe}
+        recipe={recipeData}
+        getDifferentRecipe={getDifferentRecipe}
+        recipeName={recipeName}
       />
     </>
   );
