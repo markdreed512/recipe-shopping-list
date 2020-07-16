@@ -6,12 +6,19 @@ function IngredientsList(props) {
             <h2>{props.recipeName}</h2>
             <button onClick={props.getDifferentRecipe}>Next recipe</button>
             <a href={props.recipe.url} target="blank"><button>Go to Recipe</button></a>
-            <ul>
+            <table>
                 {props.ingredients.map((ingredient, i) => {
-
-                    return <li key={i}>{ingredient.text}</li>
+                    return (
+                        <tr key={i}>
+                            <input type="checkbox" />
+                            <td>
+                                {ingredient.text}
+                            </td>
+                            <button onClick={props.deleteItem} id={i}>X</button>
+                        </tr>
+                    )
                 })}
-            </ul>
+            </table>
         </>
     )
 }
